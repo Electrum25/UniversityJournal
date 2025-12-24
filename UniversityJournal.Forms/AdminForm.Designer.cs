@@ -41,11 +41,13 @@
             btnUpdateGroup = new Button();
             btnUpdateSubject = new Button();
             btnExportToExcel = new Button();
+            btnAddAdmin = new Button();
+            btnLogout = new Button();
             SuspendLayout();
             // 
             // btnAddTeacher
             // 
-            btnAddTeacher.Location = new Point(54, 78);
+            btnAddTeacher.Location = new Point(54, 107);
             btnAddTeacher.Name = "btnAddTeacher";
             btnAddTeacher.Size = new Size(164, 23);
             btnAddTeacher.TabIndex = 0;
@@ -55,7 +57,7 @@
             // 
             // btnAddStudent
             // 
-            btnAddStudent.Location = new Point(54, 107);
+            btnAddStudent.Location = new Point(54, 136);
             btnAddStudent.Name = "btnAddStudent";
             btnAddStudent.Size = new Size(164, 23);
             btnAddStudent.TabIndex = 1;
@@ -65,7 +67,7 @@
             // 
             // btnAddGroup
             // 
-            btnAddGroup.Location = new Point(54, 136);
+            btnAddGroup.Location = new Point(54, 165);
             btnAddGroup.Name = "btnAddGroup";
             btnAddGroup.Size = new Size(164, 23);
             btnAddGroup.TabIndex = 2;
@@ -75,7 +77,7 @@
             // 
             // btnCreateSubject
             // 
-            btnCreateSubject.Location = new Point(54, 165);
+            btnCreateSubject.Location = new Point(54, 194);
             btnCreateSubject.Name = "btnCreateSubject";
             btnCreateSubject.Size = new Size(164, 23);
             btnCreateSubject.TabIndex = 3;
@@ -85,7 +87,7 @@
             // 
             // btnLinkStudentSubject
             // 
-            btnLinkStudentSubject.Location = new Point(54, 194);
+            btnLinkStudentSubject.Location = new Point(54, 223);
             btnLinkStudentSubject.Name = "btnLinkStudentSubject";
             btnLinkStudentSubject.Size = new Size(164, 43);
             btnLinkStudentSubject.TabIndex = 4;
@@ -165,7 +167,7 @@
             // 
             // btnExportToExcel
             // 
-            btnExportToExcel.Location = new Point(474, 244);
+            btnExportToExcel.Location = new Point(474, 289);
             btnExportToExcel.Name = "btnExportToExcel";
             btnExportToExcel.Size = new Size(138, 23);
             btnExportToExcel.TabIndex = 12;
@@ -173,11 +175,33 @@
             btnExportToExcel.UseVisualStyleBackColor = true;
             btnExportToExcel.Click += btnExportToExcel_Click;
             // 
+            // btnAddAdmin
+            // 
+            btnAddAdmin.Location = new Point(54, 78);
+            btnAddAdmin.Name = "btnAddAdmin";
+            btnAddAdmin.Size = new Size(164, 23);
+            btnAddAdmin.TabIndex = 13;
+            btnAddAdmin.Text = "Создать админа";
+            btnAddAdmin.UseVisualStyleBackColor = true;
+            btnAddAdmin.Click += btnAddAdmin_Click;
+            // 
+            // btnLogout
+            // 
+            btnLogout.Location = new Point(537, 12);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(75, 23);
+            btnLogout.TabIndex = 14;
+            btnLogout.Text = "Выход";
+            btnLogout.UseVisualStyleBackColor = true;
+            btnLogout.Click += btnLogout_Click;
+            // 
             // AdminForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(683, 346);
+            Controls.Add(btnLogout);
+            Controls.Add(btnAddAdmin);
             Controls.Add(btnExportToExcel);
             Controls.Add(btnUpdateSubject);
             Controls.Add(btnUpdateGroup);
@@ -212,5 +236,7 @@
         private Button btnUpdateGroup;
         private Button btnUpdateSubject;
         private Button btnExportToExcel;
+        private Button btnAddAdmin;
+        private Button btnLogout;
     }
 }

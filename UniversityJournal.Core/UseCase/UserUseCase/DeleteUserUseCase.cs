@@ -29,7 +29,12 @@ namespace UniversityJournal.Core.UseCases
 
             if (user.Role == UserRole.Admin)
             {
-                throw new InvalidOperationException("Нельзя удалить пользователя с ролью Admin.");
+                var allUsers = await _userRepository.GetAll();
+                var adminCount = allUsers?.Count(u => u.Role == UserRole.Admin) ?? 0;
+                if (adminCount <= 1)
+                {
+                    throw new InvalidOperationException("Нельзя удалить последнего админа. Должен остаться хотя бы один админ.");
+                }
             }
 
             if (user.Role == UserRole.Teacher)

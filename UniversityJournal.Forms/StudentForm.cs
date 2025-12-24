@@ -28,10 +28,10 @@ namespace UniversityJournal.Forms
 
                 if (data.Grades != null && data.Grades.Any())
                 {
-                    dgvGrades.AutoGenerateColumns = true; 
+                    dgvGrades.AutoGenerateColumns = true;
                     dgvGrades.DataSource = data.Grades.Select(g => new
                     {
-                        Предмет = subjectDict.ContainsKey(g.SubjectId) ? subjectDict[g.SubjectId] : "Unknown",  
+                        Предмет = subjectDict.ContainsKey(g.SubjectId) ? subjectDict[g.SubjectId] : "Unknown",
                         Лаба = g.LabNumber,
                         Оценка = g.Score,
                         Дата = g.Date,
@@ -45,10 +45,10 @@ namespace UniversityJournal.Forms
 
                 if (data.Attendances != null && data.Attendances.Any())
                 {
-                    dgvAttendances.AutoGenerateColumns = true; 
+                    dgvAttendances.AutoGenerateColumns = true;
                     dgvAttendances.DataSource = data.Attendances.Select(a => new
                     {
-                        Предмет = subjectDict.ContainsKey(a.SubjectId) ? subjectDict[a.SubjectId] : "Unknown", 
+                        Предмет = subjectDict.ContainsKey(a.SubjectId) ? subjectDict[a.SubjectId] : "Unknown",
                         Дата = a.Date,
                         Статус = a.Status.ToString()
                     }).ToList();
@@ -58,6 +58,13 @@ namespace UniversityJournal.Forms
                     MessageBox.Show("Нет посещаемостей.");
                 }
             }
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            var loginForm = new LoginForm(_serviceProvider);
+            loginForm.Show();
+            this.Hide();
         }
     }
 }

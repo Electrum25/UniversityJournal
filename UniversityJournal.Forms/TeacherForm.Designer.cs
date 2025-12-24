@@ -48,12 +48,13 @@ namespace UniversityJournal.Forms
             btnUpdateFinalGrade = new Button();
             label7 = new Label();
             btnViewResults = new Button();
+            btnLogout = new Button();
             SuspendLayout();
             // 
             // cmbSubject
             // 
             cmbSubject.FormattingEnabled = true;
-            cmbSubject.Location = new Point(39, 97);
+            cmbSubject.Location = new Point(37, 112);
             cmbSubject.Name = "cmbSubject";
             cmbSubject.Size = new Size(121, 23);
             cmbSubject.TabIndex = 0;
@@ -62,35 +63,35 @@ namespace UniversityJournal.Forms
             // cmbStudent
             // 
             cmbStudent.FormattingEnabled = true;
-            cmbStudent.Location = new Point(39, 53);
+            cmbStudent.Location = new Point(37, 68);
             cmbStudent.Name = "cmbStudent";
             cmbStudent.Size = new Size(121, 23);
             cmbStudent.TabIndex = 1;
             // 
             // txtLabNumber
             // 
-            txtLabNumber.Location = new Point(303, 53);
+            txtLabNumber.Location = new Point(301, 68);
             txtLabNumber.Name = "txtLabNumber";
             txtLabNumber.Size = new Size(121, 23);
             txtLabNumber.TabIndex = 2;
             // 
             // txtScore
             // 
-            txtScore.Location = new Point(303, 97);
+            txtScore.Location = new Point(301, 112);
             txtScore.Name = "txtScore";
             txtScore.Size = new Size(121, 23);
             txtScore.TabIndex = 3;
             // 
             // txtComment
             // 
-            txtComment.Location = new Point(303, 141);
+            txtComment.Location = new Point(301, 156);
             txtComment.Name = "txtComment";
             txtComment.Size = new Size(121, 23);
             txtComment.TabIndex = 4;
             // 
             // btnSetGrade
             // 
-            btnSetGrade.Location = new Point(328, 170);
+            btnSetGrade.Location = new Point(326, 185);
             btnSetGrade.Name = "btnSetGrade";
             btnSetGrade.Size = new Size(75, 23);
             btnSetGrade.TabIndex = 5;
@@ -101,7 +102,7 @@ namespace UniversityJournal.Forms
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(39, 79);
+            label1.Location = new Point(37, 94);
             label1.Name = "label1";
             label1.Size = new Size(55, 15);
             label1.TabIndex = 6;
@@ -110,7 +111,7 @@ namespace UniversityJournal.Forms
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(39, 35);
+            label2.Location = new Point(37, 50);
             label2.Name = "label2";
             label2.Size = new Size(50, 15);
             label2.TabIndex = 7;
@@ -119,7 +120,7 @@ namespace UniversityJournal.Forms
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(303, 35);
+            label3.Location = new Point(301, 50);
             label3.Name = "label3";
             label3.Size = new Size(86, 15);
             label3.TabIndex = 8;
@@ -128,7 +129,7 @@ namespace UniversityJournal.Forms
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(303, 79);
+            label4.Location = new Point(301, 94);
             label4.Name = "label4";
             label4.Size = new Size(48, 15);
             label4.TabIndex = 9;
@@ -137,7 +138,7 @@ namespace UniversityJournal.Forms
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(303, 123);
+            label5.Location = new Point(301, 138);
             label5.Name = "label5";
             label5.Size = new Size(84, 15);
             label5.TabIndex = 10;
@@ -146,14 +147,14 @@ namespace UniversityJournal.Forms
             // cmbStatus
             // 
             cmbStatus.FormattingEnabled = true;
-            cmbStatus.Location = new Point(604, 53);
+            cmbStatus.Location = new Point(602, 68);
             cmbStatus.Name = "cmbStatus";
             cmbStatus.Size = new Size(121, 23);
             cmbStatus.TabIndex = 11;
             // 
             // btnMarkAttendance
             // 
-            btnMarkAttendance.Location = new Point(584, 111);
+            btnMarkAttendance.Location = new Point(582, 126);
             btnMarkAttendance.Name = "btnMarkAttendance";
             btnMarkAttendance.Size = new Size(166, 23);
             btnMarkAttendance.TabIndex = 12;
@@ -164,7 +165,7 @@ namespace UniversityJournal.Forms
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(604, 35);
+            label6.Location = new Point(602, 50);
             label6.Name = "label6";
             label6.Size = new Size(91, 15);
             label6.TabIndex = 13;
@@ -172,21 +173,21 @@ namespace UniversityJournal.Forms
             // 
             // dtpDate
             // 
-            dtpDate.Location = new Point(564, 82);
+            dtpDate.Location = new Point(562, 97);
             dtpDate.Name = "dtpDate";
             dtpDate.Size = new Size(200, 23);
             dtpDate.TabIndex = 14;
             // 
             // txtFinalGrade
             // 
-            txtFinalGrade.Location = new Point(613, 170);
+            txtFinalGrade.Location = new Point(611, 185);
             txtFinalGrade.Name = "txtFinalGrade";
             txtFinalGrade.Size = new Size(100, 23);
             txtFinalGrade.TabIndex = 15;
             // 
             // btnUpdateFinalGrade
             // 
-            btnUpdateFinalGrade.Location = new Point(564, 199);
+            btnUpdateFinalGrade.Location = new Point(562, 214);
             btnUpdateFinalGrade.Name = "btnUpdateFinalGrade";
             btnUpdateFinalGrade.Size = new Size(186, 23);
             btnUpdateFinalGrade.TabIndex = 16;
@@ -197,7 +198,7 @@ namespace UniversityJournal.Forms
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(613, 152);
+            label7.Location = new Point(611, 167);
             label7.Name = "label7";
             label7.Size = new Size(100, 15);
             label7.TabIndex = 17;
@@ -213,11 +214,22 @@ namespace UniversityJournal.Forms
             btnViewResults.UseVisualStyleBackColor = true;
             btnViewResults.Click += btnViewResults_Click;
             // 
+            // btnLogout
+            // 
+            btnLogout.Location = new Point(713, 12);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(75, 23);
+            btnLogout.TabIndex = 19;
+            btnLogout.Text = "Выход";
+            btnLogout.UseVisualStyleBackColor = true;
+            btnLogout.Click += btnLogout_Click;
+            // 
             // TeacherForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnLogout);
             Controls.Add(btnViewResults);
             Controls.Add(label7);
             Controls.Add(btnUpdateFinalGrade);
@@ -270,5 +282,6 @@ namespace UniversityJournal.Forms
         private Button btnUpdateFinalGrade;
         private Label label7;
         private Button btnViewResults;
+        private Button btnLogout;
     }
 }

@@ -191,5 +191,23 @@ namespace UniversityJournal.Forms
             }
 
         }
+        private void btnAddAdmin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var form = new AddAdminDialog(_serviceProvider);
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка открытия диалога: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            var loginForm = new LoginForm(_serviceProvider);
+            loginForm.Show();
+            this.Hide();
+        }
     }
 }

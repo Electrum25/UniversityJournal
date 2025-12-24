@@ -181,5 +181,11 @@ namespace UniversityJournal.Forms
                 MessageBox.Show($"Ошибка открытия формы: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            var loginForm = new LoginForm(_serviceProvider);
+            loginForm.Show();
+            this.Hide();
+        }
     }
 }

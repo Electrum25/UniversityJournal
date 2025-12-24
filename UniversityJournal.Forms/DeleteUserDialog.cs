@@ -15,17 +15,21 @@ namespace UniversityJournal.Forms
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
-            LoadUsers();
+            LoadUsersAsync();  // Вызов без await, так как конструктор не async
         }
 
-        private async void LoadUsers()
+        private async Task LoadUsersAsync()  // Изменено на async Task
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
                 _users = await userRepo.GetAll() ?? new List<User>();
 
-                cmbUsers.DataSource = _users.Select(u => new
+                // Фильтруем админов, если их <= 1
+                var adminCount = _users.Count(u => u.Role == UserRole.Admin);
+                var filteredUsers = adminCount <= 1 ? _users.Where(u => u.Role != UserRole.Admin) : _users;
+
+                cmbUsers.DataSource = filteredUsers.Select(u => new
                 {
                     Display = $"{u.Login} ({u.Role})",
                     Value = u.UserId
@@ -59,7 +63,7 @@ namespace UniversityJournal.Forms
                         var useCase = scope.ServiceProvider.GetRequiredService<DeleteUserUseCase>();
                         await useCase.Handle(userId);
                         MessageBox.Show("Пользователь успешно удален.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.Close();  
+                        await LoadUsersAsync();  // Теперь корректно с await
                     }
                 }
                 catch (Exception ex)
