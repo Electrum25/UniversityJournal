@@ -19,12 +19,20 @@ namespace UniversityJournal.Core.UseCases
                 throw new ArgumentException("SubjectName and TeacherId are required.");
             }
 
+            // Простая проверка: часов не может быть 0 или меньше
+            if (request.TotalHours <= 0)
+            {
+                throw new ArgumentException("TotalHours must be greater than zero.");
+            }
+
             var subject = new Subject
             {
                 SubjectId = Guid.NewGuid(),
                 SubjectName = request.SubjectName,
-                TeacherId = request.TeacherId
+                TeacherId = request.TeacherId,
+                TotalHours = request.TotalHours // Передаем часы в базу
             };
+
             return await _subjectRepository.Create(subject);
         }
 
@@ -32,6 +40,7 @@ namespace UniversityJournal.Core.UseCases
         {
             public string SubjectName { get; set; } = string.Empty;
             public Guid TeacherId { get; set; }
+            public int TotalHours { get; set; }
         }
     }
 }

@@ -22,21 +22,19 @@ namespace UniversityJournal.Core.UseCases
         public async Task<bool> Handle(Guid userId)
         {
             var user = await _userRepository.Get(userId);
-            if (user == null)
-            {
-                throw new ArgumentException("Пользователь не найден.", nameof(userId));
-            }
+            if (user == null) throw new ArgumentException("Пользователь не найден.");
 
+            // Логика защиты админа
             if (user.Role == UserRole.Admin)
             {
                 var allUsers = await _userRepository.GetAll();
-                var adminCount = allUsers?.Count(u => u.Role == UserRole.Admin) ?? 0;
-                if (adminCount <= 1)
-                {
-                    throw new InvalidOperationException("Нельзя удалить последнего админа. Должен остаться хотя бы один админ.");
-                }
+                if (allUsers?.Count(u => u.Role == UserRole.Admin) <= 1)
+                    throw new InvalidOperationException("Нельзя удалить последнего админа.");
             }
 
+            // Удаление роли (Teacher или Student)
+            // База данных автоматически удалит записи в связанных таблицах (Subjects, Grades, Attendances)
+            // благодаря настройке OnDelete(DeleteBehavior.Cascade) в DbContext
             if (user.Role == UserRole.Teacher)
             {
                 var teachers = await _teacherRepository.GetAll();
@@ -56,6 +54,7 @@ namespace UniversityJournal.Core.UseCases
                 }
             }
 
+            // Удаление основной записи пользователя
             await _userRepository.Delete(userId);
             return true;
         }

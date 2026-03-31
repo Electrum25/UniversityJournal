@@ -1,4 +1,5 @@
-﻿using UniversityJournal.Core.Entities;
+﻿using UniversityJournal.Core.DTOs;
+using UniversityJournal.Core.Entities;
 
 namespace UniversityJournal.Core.Repositories
 {
@@ -10,6 +11,7 @@ namespace UniversityJournal.Core.Repositories
         public Task<Grade?> Get(Guid gradeId);
         public Task<List<Grade>?> GetByStudent(Guid studentId);
         public Task<List<Grade>?> GetBySubject(Guid subjectId);
-        public Task<List<Grade>?> GetAll();  
+        public Task<List<Grade>?> GetAll();
+        public Task<bool> Update(UpdateGradeRequest request);
     }
 }

@@ -10,6 +10,7 @@ namespace UniversityJournal.Core.Entities
     {
         public Guid SubjectId { get; set; }    
         public string SubjectName { get; set; } 
-        public Guid TeacherId { get; set; }    
+        public Guid? TeacherId { get; set; }
+        public int TotalHours { get; set; }
     }
 }

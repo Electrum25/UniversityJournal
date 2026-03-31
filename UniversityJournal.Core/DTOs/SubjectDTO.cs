@@ -11,12 +11,15 @@ namespace UniversityJournal.Core.DTOs
     {
         public Guid SubjectId { get; set; }    
         public string SubjectName { get; set; } 
-        public Guid TeacherId { get; set; }   
+        public Guid? TeacherId { get; set; }
+
+        public int TotalHours { get; set; }
         public SubjectDTO(Subject subject) 
         {
             SubjectId = subject.SubjectId;
             SubjectName = subject.SubjectName;
             TeacherId = subject.TeacherId;
+            TotalHours = subject.TotalHours;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UniversityJournal.Core.DTOs;
 using UniversityJournal.Core.Entities;
 using UniversityJournal.Core.Repositories;
 using UniversityJournal.EfCore;
@@ -65,6 +66,22 @@ namespace UniversityJournal.Storage.EfCore.Repositories
         public async Task<List<Grade>?> GetAll() 
         {
             return await _context.Grades.ToListAsync();
+        }
+
+        public async Task<bool> Update(UpdateGradeRequest request)
+        {
+            // 1. Ищем существующую оценку в базе данных
+            var grade = await _context.Grades.FindAsync(request.GradeId);
+
+            if (grade == null)
+                throw new ArgumentException("Оценка не найдена", nameof(request.GradeId));
+
+            // 2. Обновляем нужные поля
+            grade.Score = request.Score;
+            grade.Comment = request.Comment;
+
+            // 3. Сохраняем изменения
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

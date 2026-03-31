@@ -22,15 +22,19 @@ namespace UniversityJournal.Core.UseCases
                 throw new ArgumentException("Студент не найден.", nameof(request.StudentId));
             }
 
-            var group = await _groupRepository.Get(request.GroupId);
-            if (group == null)
+            // ✅ ИЗМЕНЕНО: Проверка только если GroupId передан
+            if (request.GroupId.HasValue)
             {
-                throw new ArgumentException("Группа не найдена.", nameof(request.GroupId));
+                var group = await _groupRepository.Get(request.GroupId.Value);
+                if (group == null)
+                {
+                    throw new ArgumentException("Группа не найдена.", nameof(request.GroupId));
+                }
+                student.GroupId = request.GroupId.Value;
             }
 
             student.FirstName = request.FirstName;
             student.LastName = request.LastName;
-            student.GroupId = request.GroupId;
 
             var success = await _studentRepository.Update(student);
             if (!success)
@@ -44,7 +48,7 @@ namespace UniversityJournal.Core.UseCases
             public Guid StudentId { get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
-            public Guid GroupId { get; set; }
+            public Guid? GroupId { get; set; }
         }
     }
 }

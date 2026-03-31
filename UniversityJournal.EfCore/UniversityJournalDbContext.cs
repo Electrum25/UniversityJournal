@@ -19,15 +19,18 @@ namespace UniversityJournal.EfCore
         public DbSet<StudentSubject> StudentSubjects { get; set; }
         public DbSet<Grade> Grades { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<ScheduleItem> ScheduleItems { get; set; }
 
         public UniversityJournalDbContext(DbContextOptions<UniversityJournalDbContext> options) : base(options)
         {
-            //Database.EnsureDeleted(); 
-            //Database.EnsureCreated(); 
+            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>()
                 .HasKey(u => u.UserId);
 
@@ -64,7 +67,7 @@ namespace UniversityJournal.EfCore
                 .HasOne<User>() 
                 .WithMany() 
                 .HasForeignKey(s => s.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Student>()
                 .HasOne<Core.Entities.Group>()
@@ -76,13 +79,14 @@ namespace UniversityJournal.EfCore
                 .HasOne<User>()
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Subject>()
                 .HasOne<Teacher>()
                 .WithMany() 
                 .HasForeignKey(s => s.TeacherId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<StudentSubject>()
                 .HasOne<Student>()
@@ -122,7 +126,33 @@ namespace UniversityJournal.EfCore
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Login)
-                .IsUnique(); 
+                .IsUnique();
+
+            modelBuilder.Entity<ScheduleItem>(entity =>
+            {
+                entity.ToTable("ScheduleItem");
+
+                entity.HasKey(s => s.ScheduleItemId);
+
+                // Связь с предметом
+                entity.HasOne(s => s.Subject)
+                      .WithMany()
+                      .HasForeignKey(s => s.SubjectId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // Связь с группой
+                entity.HasOne<Core.Entities.Group>()
+                      .WithMany()
+                      .HasForeignKey(s => s.GroupId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // ИСПРАВЛЕННАЯ СВЯЗЬ С ПРЕПОДАВАТЕЛЕМ
+                // Указываем явно свойство s.Teacher, чтобы не создавалось TeacherId1
+                entity.HasOne(s => s.Teacher)
+                      .WithMany()
+                      .HasForeignKey(s => s.TeacherId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
             var adminUserId = Guid.NewGuid();
             var testGroupId = Guid.NewGuid();
