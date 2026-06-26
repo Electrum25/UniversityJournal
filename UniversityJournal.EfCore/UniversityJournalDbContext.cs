@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using UniversityJournal.Core.Entities; // Предполагаю, что namespace для сущностей — UniversityJournal.Core.Entities
-using BCrypt.Net; // Добавь NuGet пакет BCrypt.Net для хэширования
+using UniversityJournal.Core.Entities;
+using BCrypt.Net;
 
 namespace UniversityJournal.EfCore
 {
@@ -131,30 +131,26 @@ namespace UniversityJournal.EfCore
             modelBuilder.Entity<ScheduleItem>(entity =>
             {
                 entity.ToTable("ScheduleItem");
-
+                entity.Property(s => s.Date).IsRequired();
                 entity.HasKey(s => s.ScheduleItemId);
 
-                // Связь с предметом
                 entity.HasOne(s => s.Subject)
                       .WithMany()
                       .HasForeignKey(s => s.SubjectId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                // Связь с группой
                 entity.HasOne<Core.Entities.Group>()
                       .WithMany()
                       .HasForeignKey(s => s.GroupId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                // ИСПРАВЛЕННАЯ СВЯЗЬ С ПРЕПОДАВАТЕЛЕМ
-                // Указываем явно свойство s.Teacher, чтобы не создавалось TeacherId1
                 entity.HasOne(s => s.Teacher)
                       .WithMany()
                       .HasForeignKey(s => s.TeacherId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            var adminUserId = Guid.NewGuid();
+            var adminUserId = Guid.Parse("019da581-0291-79d3-aae2-bae4cdd9a4a9");
             var testGroupId = Guid.NewGuid();
             var testTeacherUserId = Guid.NewGuid();
             var testTeacherId = Guid.NewGuid();

@@ -11,7 +11,7 @@ namespace UniversityJournal.Core.DTOs
         public string Token { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public Guid UserId { get; set; }
-        public Guid? BusinessId { get; set; } // StudentId или TeacherId
+        public Guid? BusinessId { get; set; }
     }
 }
 

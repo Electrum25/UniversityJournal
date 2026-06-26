@@ -10,6 +10,8 @@ namespace UniversityJournal.Core.Repositories
         public Task<Attendance?> Get(Guid attendanceId);
         public Task<List<Attendance>?> GetByStudent(Guid studentId);
         public Task<List<Attendance>?> GetBySubject(Guid subjectId);
-        public Task<List<Attendance>?> GetAll(); 
+        public Task<List<Attendance>?> GetAll();
+        Task<Attendance?> GetByStudentAndDate(Guid studentId, DateTime date);
+        Task<Attendance?> GetByStudentAndSubjectAndDate(Guid studentId, Guid subjectId, DateTime date);
     }
 }

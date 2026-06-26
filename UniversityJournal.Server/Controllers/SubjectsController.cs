@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UniversityJournal.Core.Entities;
-using UniversityJournal.Core.UseCases;
-using UniversityJournal.Core.Repositories;
+﻿using Microsoft.AspNetCore.Authorization; 
+using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
+using System.Linq;
 using UniversityJournal.Core.DTOs;
-using Microsoft.AspNetCore.Authorization; // Подключаем авторизацию
+using UniversityJournal.Core.Entities;
+using UniversityJournal.Core.Repositories;
+using UniversityJournal.Core.UseCases;
 
 namespace UniversityJournal.Server.Controllers
 {
-    [Authorize] // Весь контроллер требует авторизации
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class SubjectsController : ControllerBase
@@ -21,9 +23,6 @@ namespace UniversityJournal.Server.Controllers
 
         #region Subject Management (Управление предметами)
 
-        /// <summary>
-        /// Создать новый предмет. Только Админ.
-        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(
@@ -41,9 +40,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Посмотреть предметы конкретного учителя. Доступно учителям и админам.
-        /// </summary>
         [HttpGet("teacher/{teacherId}")]
         [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> GetByTeacher(
@@ -51,16 +47,10 @@ namespace UniversityJournal.Server.Controllers
     [FromServices] GetSubjectsByTeacherUseCase getUseCase)
         {
             var subjects = await getUseCase.Handle(teacherId);
+            return Ok(subjects);
 
-            // ОБЯЗАТЕЛЬНО маппим в DTO, чтобы имена полей совпали с моделью во Flutter
-            var dtos = subjects.Select(s => new SubjectDTO(s)).ToList();
-
-            return Ok(dtos);
         }
 
-        /// <summary>
-        /// Обновить данные предмета. Только Админ.
-        /// </summary>
         [HttpPut]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(
@@ -78,9 +68,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Удалить предмет. Только Админ.
-        /// </summary>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(
@@ -103,9 +90,6 @@ namespace UniversityJournal.Server.Controllers
 
         #region Student Assignments (Привязка студентов к предметам)
 
-        /// <summary>
-        /// Привязать студента к предмету (Зачисление). Только Админ.
-        /// </summary>
         [HttpPost("enroll")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EnrollStudent(
@@ -123,9 +107,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Отвязать студента от предмета. Только Админ.
-        /// </summary>
         [HttpDelete("unlink")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnlinkStudent(
@@ -144,21 +125,16 @@ namespace UniversityJournal.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")] // Только админ может видеть всё
+        [Authorize(Roles = "Admin")] 
         public async Task<IActionResult> GetAll()
         {
-            // Здесь используй свой репозиторий напрямую или через UseCase
             var subjects = await _subjectRepository.GetAll();
 
-            // Маппим в DTO, чтобы Flutter понимал структуру
             var dtos = subjects.Select(s => new SubjectDTO(s)).ToList();
 
             return Ok(dtos);
         }
 
-        /// <summary>
-        /// Выставить финальную оценку. Доступно Учителю и Админу.
-        /// </summary>
         [HttpPut("final-grade")]
         [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> UpdateFinalGrade(
@@ -176,28 +152,22 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Получить список студентов, зачисленных на предмет.
-        /// </summary>
         [HttpGet("enrolled-students/{subjectId}")]
         [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> GetEnrolledStudents(Guid subjectId, [FromServices] IStudentRepository studentRepository, [FromServices] IStudentSubjectRepository studentSubjectRepository)
         {
             try
             {
-                // 1. Получаем все связи "Студент-Предмет" для данного предмета
                 var assignments = await studentSubjectRepository.GetBySubject(subjectId);
                 if (assignments == null || !assignments.Any())
                     return Ok(new List<StudentDTO>());
 
-                // 2. Получаем ID всех зачисленных студентов
                 var studentIds = assignments.Select(a => a.StudentId).ToList();
 
-                // 3. Получаем полные данные студентов из репозитория студентов
                 var allStudents = await studentRepository.GetAll();
                 var enrolledStudents = allStudents
                     .Where(s => studentIds.Contains(s.StudentId))
-                    .Select(s => new StudentDTO(s)) // Маппим в DTO
+                    .Select(s => new StudentDTO(s)) 
                     .ToList();
 
                 return Ok(enrolledStudents);
@@ -208,19 +178,14 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Получить список предметов, на которые зачислен студент.
-        /// </summary>
         [HttpGet("student/{studentId}")]
         [Authorize(Roles = "Student,Admin")]
         public async Task<IActionResult> GetByStudent(Guid studentId, [FromServices] IStudentSubjectRepository studentSubjectRepository)
         {
             try
             {
-                // 1. Получаем связи студента с предметами
                 var assignments = await studentSubjectRepository.GetByStudent(studentId);
 
-                // 2. Получаем сами объекты предметов из репозитория
                 var allSubjects = await _subjectRepository.GetAll();
                 var studentSubjectIds = assignments.Select(a => a.SubjectId).ToList();
 

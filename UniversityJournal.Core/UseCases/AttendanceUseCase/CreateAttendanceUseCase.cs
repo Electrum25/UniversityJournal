@@ -21,7 +21,7 @@ namespace UniversityJournal.Core.UseCases
             var student = await _studentRepository.Get(request.StudentId);
             if (student == null)
             {
-                throw new ArgumentException("Студент не найден.");
+                throw new ArgumentException($"Студент не найден. ID: {request.StudentId}");
             }
 
             var subject = await _subjectRepository.Get(request.SubjectId);
@@ -35,15 +35,25 @@ namespace UniversityJournal.Core.UseCases
                 throw new ArgumentException("Статус обязателен.");
             }
 
-            var attendance = new Attendance
+            var existingAttendance = await _attendanceRepository.GetByStudentAndSubjectAndDate(request.StudentId, request.SubjectId, request.Date);
+
+            if (existingAttendance != null)
             {
-                AttendanceId = Guid.NewGuid(),
-                StudentId = request.StudentId,
-                SubjectId = request.SubjectId,
-                Date = request.Date.ToUniversalTime(), 
-                Status = request.Status
-            };
-            await _attendanceRepository.Create(attendance);
+                existingAttendance.Status = request.Status;
+                await _attendanceRepository.Update(existingAttendance);
+            }
+            else
+            {
+                var attendance = new Attendance
+                {
+                    AttendanceId = Guid.NewGuid(),
+                    StudentId = request.StudentId,
+                    SubjectId = request.SubjectId,
+                    Date = request.Date.ToUniversalTime(),
+                    Status = request.Status
+                };
+                await _attendanceRepository.Create(attendance);
+            }
         }
 
         public class CreateAttendanceRequest

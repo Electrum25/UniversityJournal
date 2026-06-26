@@ -66,5 +66,18 @@ namespace UniversityJournal.Storage.EfCore.Repositories
         {
             return await _context.Attendances.ToListAsync();
         }
+        public async Task<Attendance?> GetByStudentAndDate(Guid studentId, DateTime date)
+        {
+            return await _context.Attendances
+                .FirstOrDefaultAsync(a => a.StudentId == studentId && a.Date.Date == date.Date);
+        }
+
+        public async Task<Attendance?> GetByStudentAndSubjectAndDate(Guid studentId, Guid subjectId, DateTime date)
+        {
+            return await _context.Attendances
+                .FirstOrDefaultAsync(a => a.StudentId == studentId
+                                          && a.SubjectId == subjectId
+                                          && a.Date.Date == date.Date);
+        }
     }
 }

@@ -10,7 +10,6 @@ namespace UniversityJournal.Core.UseCases
         private readonly IStudentRepository _studentRepository;
         private readonly ITeacherRepository _teacherRepository;
 
-        // Добавляем репозитории студентов и учителей в конструктор
         public AuthenticateUserUseCase(
             IUserRepository userRepository,
             IStudentRepository studentRepository,
@@ -25,13 +24,11 @@ namespace UniversityJournal.Core.UseCases
         {
             if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
             {
-                return null; // Или выбрасывай исключение, если так удобнее
+                return null;
             }
 
-            // Ищем пользователя (по логину или email, смотря как реализовано в репозитории)
             var user = await _userRepository.GetByLogin(request.Login);
 
-            // Проверка пароля (используем PasswordHash, как в твоем исходном коде)
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
                 return null;
@@ -39,8 +36,7 @@ namespace UniversityJournal.Core.UseCases
 
             Guid? businessId = null;
 
-            // Логика поиска ID студента или учителя
-            if (user.Role == UserRole.Student) // Сравниваем напрямую с типом UserRole
+            if (user.Role == UserRole.Student) 
             {
                 var students = await _studentRepository.GetAll();
                 businessId = students?.FirstOrDefault(s => s.UserId == user.UserId)?.StudentId;
@@ -58,7 +54,6 @@ namespace UniversityJournal.Core.UseCases
             };
         }
 
-        // Вспомогательные классы
         public class AuthenticateUserRequest
         {
             public string Login { get; set; } = string.Empty;

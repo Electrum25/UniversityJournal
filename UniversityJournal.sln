@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityJournal.Core", "U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityJournal.EfCore", "UniversityJournal.EfCore\UniversityJournal.EfCore.csproj", "{94F2875A-AC15-4562-9A7B-B5218F1F8A53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityJournal.Forms", "UniversityJournal.Forms\UniversityJournal.Forms.csproj", "{B1461C96-8702-418A-9E1E-845A3F6B1F8E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityJournal.Server", "UniversityJournal.Server\UniversityJournal.Server.csproj", "{9F9127C1-1029-4F0D-A9C1-4618A63EA485}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{94F2875A-AC15-4562-9A7B-B5218F1F8A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94F2875A-AC15-4562-9A7B-B5218F1F8A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94F2875A-AC15-4562-9A7B-B5218F1F8A53}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1461C96-8702-418A-9E1E-845A3F6B1F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1461C96-8702-418A-9E1E-845A3F6B1F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1461C96-8702-418A-9E1E-845A3F6B1F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1461C96-8702-418A-9E1E-845A3F6B1F8E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F9127C1-1029-4F0D-A9C1-4618A63EA485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F9127C1-1029-4F0D-A9C1-4618A63EA485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F9127C1-1029-4F0D-A9C1-4618A63EA485}.Release|Any CPU.ActiveCfg = Release|Any CPU

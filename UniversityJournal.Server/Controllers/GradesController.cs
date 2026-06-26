@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UniversityJournal.Core.Entities;
-using UniversityJournal.Core.UseCases;
-using UniversityJournal.Core.Repositories;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using UniversityJournal.Core.DTOs;
+using UniversityJournal.Core.Entities;
+using UniversityJournal.Core.Repositories;
+using UniversityJournal.Core.UseCases;
 
 namespace UniversityJournal.Server.Controllers
 {
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class GradesController : ControllerBase
@@ -17,14 +20,11 @@ namespace UniversityJournal.Server.Controllers
             _gradeRepository = gradeRepository;
         }
 
-        /// <summary>
-        /// Поставить оценку за работу (лабораторную)
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Create(
             [FromBody] CreateGradeUseCase.CreateGradeRequest request,
             [FromServices] CreateGradeUseCase createUseCase,
-            [FromHeader] Guid teacherId) // teacherId можно передавать в заголовке или брать из JWT
+            [FromHeader] Guid teacherId) 
         {
             try
             {
@@ -37,9 +37,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Получить все оценки по конкретному предмету
-        /// </summary>
         [HttpGet("subject/{subjectId}")]
         public async Task<IActionResult> GetBySubject(Guid subjectId)
         {
@@ -47,9 +44,6 @@ namespace UniversityJournal.Server.Controllers
             return Ok(grades ?? new List<Grade>());
         }
 
-        /// <summary>
-        /// Получить "карточку" студента: все его оценки, посещаемость и список предметов
-        /// </summary>
         [HttpGet("student-report/{studentId}")]
         public async Task<IActionResult> GetStudentReport(
             Guid studentId,
@@ -80,16 +74,11 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Обновить существующую оценку
-        /// </summary>
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateGradeRequest request)
         {
             try
             {
-                // Предполагаем, что у тебя есть метод в репозитории для обновления
-                // Либо вызови соответствующий UseCase, если он есть в архитектуре
                 await _gradeRepository.Update(request);
                 return Ok("Оценка обновлена");
             }

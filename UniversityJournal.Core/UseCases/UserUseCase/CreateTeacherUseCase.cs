@@ -1,42 +1,50 @@
-﻿using UniversityJournal.Core.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using UniversityJournal.Core.Entities;
+using UniversityJournal.Core.Identity;
 using UniversityJournal.Core.Repositories;
-using BCrypt.Net;
+using UniversityJournal.Core.Common;
 
 namespace UniversityJournal.Core.UseCases
 {
     public class CreateTeacherUseCase
     {
+        private readonly UserManager<UniversityJournalIdentityUser> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly ITeacherRepository _teacherRepository;
 
-        public CreateTeacherUseCase(IUserRepository userRepository, ITeacherRepository teacherRepository)
+        public CreateTeacherUseCase(UserManager<UniversityJournalIdentityUser> userManager,
+            IUserRepository userRepository, ITeacherRepository teacherRepository)
         {
+            _userManager = userManager;
             _userRepository = userRepository;
             _teacherRepository = teacherRepository;
         }
 
-        public async Task<Guid> Handle(CreateTeacherRequest request)
+        public async Task<Result<Guid>> Handle(CreateTeacherRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password) ||
-                string.IsNullOrWhiteSpace(request.FirstName) || string.IsNullOrWhiteSpace(request.LastName))
-            {
-                throw new ArgumentException("All fields are required.");
-            }
+            var existingIdentity = await _userManager.FindByNameAsync(request.Login);
+            if (existingIdentity != null)
+                return Result<Guid>.Failure("Пользователь с таким логином уже существует.");
 
-            var existingUser = await _userRepository.GetByLogin(request.Login);
-            if (existingUser != null)
+            var identityUser = new UniversityJournalIdentityUser
             {
-                throw new ArgumentException("Login already exists.");
-            }
+                UserName = request.Login,
+                Email = request.Login
+            };
+            var createResult = await _userManager.CreateAsync(identityUser, request.Password);
+            if (!createResult.Succeeded)
+                return Result<Guid>.Failure(string.Join(", ", createResult.Errors.Select(e => e.Description)));
 
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            await _userManager.AddToRoleAsync(identityUser, UserRole.Teacher.ToString());
+
             var user = new User
             {
-                UserId = Guid.NewGuid(),
+                UserId = identityUser.Id,
                 Login = request.Login,
-                PasswordHash = passwordHash,
+                PasswordHash = "PROTECTED",
                 Role = UserRole.Teacher,
                 CreatedAt = DateTime.UtcNow,
+                IdentityUserId = identityUser.Id
             };
             await _userRepository.Create(user);
 
@@ -46,11 +54,11 @@ namespace UniversityJournal.Core.UseCases
                 UserId = user.UserId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                Patronymic = request.Patronymic,
+                Patronymic = request.Patronymic
             };
-            return await _teacherRepository.Create(teacher);
+            var teacherId = await _teacherRepository.Create(teacher);
+            return Result<Guid>.Success(teacherId);
         }
-
         public class CreateTeacherRequest
         {
             public string Login { get; set; } = string.Empty;
@@ -60,4 +68,5 @@ namespace UniversityJournal.Core.UseCases
             public string? Patronymic { get; set; }
         }
     }
+    
 }

@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization; 
+using Microsoft.AspNetCore.Mvc;
 using UniversityJournal.Core.Entities;
-using UniversityJournal.Core.UseCases;
 using UniversityJournal.Core.Repositories;
-using Microsoft.AspNetCore.Authorization; // Обязательно добавляем
+using UniversityJournal.Core.UseCases;
+using OpenIddict.Validation.AspNetCore;
 
 namespace UniversityJournal.Server.Controllers
 {
-    [Authorize] // По умолчанию доступ только залогиненным пользователям
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class AttendanceController : ControllerBase
@@ -18,9 +19,6 @@ namespace UniversityJournal.Server.Controllers
             _attendanceRepository = attendanceRepository;
         }
 
-        /// <summary>
-        /// Отметить посещаемость. Доступно учителям и админам.
-        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> MarkAttendance(
@@ -39,9 +37,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// История по предмету. Только для персонала (Учителя/Админы).
-        /// </summary>
         [HttpGet("subject/{subjectId}")]
         [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> GetBySubject(Guid subjectId)
@@ -50,9 +45,6 @@ namespace UniversityJournal.Server.Controllers
             return Ok(list ?? new List<Attendance>());
         }
 
-        /// <summary>
-        /// Пропуски студента. Видят все, но логика фронтенда должна ограничивать студента его собственным ID.
-        /// </summary>
         [HttpGet("student/{studentId}")]
         [Authorize(Roles = "Student,Teacher,Admin")]
         public async Task<IActionResult> GetByStudent(Guid studentId)
@@ -61,9 +53,6 @@ namespace UniversityJournal.Server.Controllers
             return Ok(list ?? new List<Attendance>());
         }
 
-        /// <summary>
-        /// Удаление записи. Только для Администратора.
-        /// </summary>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
@@ -74,6 +63,26 @@ namespace UniversityJournal.Server.Controllers
                 return Ok("Запись удалена");
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("batch")]
+        [Authorize(Roles = "Teacher,Admin")]
+        public async Task<IActionResult> BatchMarkAttendance(
+    [FromBody] List<CreateAttendanceUseCase.CreateAttendanceRequest> requests,
+    [FromServices] CreateAttendanceUseCase createUseCase,
+    [FromHeader] Guid teacherId)
+        {
+            try
+            {
+                foreach (var request in requests)
+                {
+                    await createUseCase.Handle(request, teacherId);
+                }
+                return Ok($"Сохранено {requests.Count} записей о посещаемости");
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }

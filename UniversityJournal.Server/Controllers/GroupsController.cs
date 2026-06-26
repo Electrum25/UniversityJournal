@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization; // Добавляем поддержку атрибутов
+﻿using Microsoft.AspNetCore.Authorization; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.Validation.AspNetCore;
 using UniversityJournal.Core.DTOs;
 using UniversityJournal.Core.Entities;
 using UniversityJournal.Core.Repositories;
@@ -9,7 +10,7 @@ using UniversityJournal.EfCore;
 
 namespace UniversityJournal.Server.Controllers
 {
-    [Authorize] // По умолчанию все методы требуют авторизации
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class GroupsController : ControllerBase
@@ -21,9 +22,6 @@ namespace UniversityJournal.Server.Controllers
             _groupRepository = groupRepository;
         }
 
-        /// <summary>
-        /// Получить все группы. Доступно Студентам, Преподавателям и Админам.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll([FromServices] GetGroupsUseCase getGroupsUseCase)
         {
@@ -31,9 +29,6 @@ namespace UniversityJournal.Server.Controllers
             return Ok(groups ?? new List<Group>());
         }
 
-        /// <summary>
-        /// Получить группу по ID. Доступно всем ролям.
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -42,9 +37,6 @@ namespace UniversityJournal.Server.Controllers
             return Ok(group);
         }
 
-        /// <summary>
-        /// Создать группу. Только Администратор.
-        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(
@@ -62,9 +54,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Обновить данные группы. Только Администратор.
-        /// </summary>
         [HttpPut]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(
@@ -82,9 +71,6 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Удалить группу. Только Администратор.
-        /// </summary>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(
@@ -107,11 +93,8 @@ namespace UniversityJournal.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Получить список студентов конкретной группы.
-        /// </summary>
         [HttpGet("{id}/students")]
-        [Authorize(Roles = "Admin,Teacher")] // Обычно это нужно админам и учителям
+        [Authorize(Roles = "Admin,Teacher")] 
         public async Task<IActionResult> GetStudentsByGroup(
             Guid id,
             [FromServices] IStudentRepository studentRepository)
@@ -119,7 +102,7 @@ namespace UniversityJournal.Server.Controllers
             var students = await studentRepository.GetByGroup(id);
 
             if (students == null || !students.Any())
-                return Ok(new List<Student>()); // Возвращаем пустой список, если никого нет
+                return Ok(new List<Student>()); 
 
             return Ok(students);
         }
@@ -130,12 +113,11 @@ namespace UniversityJournal.Server.Controllers
     Guid id,
     Guid subjectId,
     [FromServices] IStudentRepository studentRepository,
-    [FromServices] UniversityJournalDbContext context) // Для быстрой проверки связи
+    [FromServices] UniversityJournalDbContext context) 
         {
             var students = await studentRepository.GetByGroup(id);
             if (students == null) return Ok(new List<StudentEnrollmentDTO>());
 
-            // Получаем ID всех студентов, которые уже записаны на этот предмет
             var enrolledIds = await context.StudentSubjects
                 .Where(ss => ss.SubjectId == subjectId)
                 .Select(ss => ss.StudentId)

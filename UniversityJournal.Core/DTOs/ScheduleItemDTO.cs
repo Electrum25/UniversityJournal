@@ -14,12 +14,11 @@ namespace UniversityJournal.Core.DTOs
         public string SubjectName { get; set; }
         public Guid GroupId { get; set; }
         public Guid TeacherId { get; set; }
-        public string TeacherFullName { get; set; } // "Иванов И.И."
+        public string TeacherFullName { get; set; } 
 
-        public DayOfWeek DayOfWeek { get; set; }
+        public DateTime Date { get; set; }
         public int PairNumber { get; set; }
 
-        // Время начала и конца (рассчитаем на бэкенде по твоей сетке)
         public string TimeRange { get; set; }
 
         public Teacher Teacher { get; set; }

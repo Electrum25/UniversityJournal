@@ -1,43 +1,53 @@
-﻿using UniversityJournal.Core.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using UniversityJournal.Core.Entities;
 using UniversityJournal.Core.Repositories;
-using BCrypt.Net;
+using UniversityJournal.Core.Identity;
+
 
 namespace UniversityJournal.Core.UseCases
 {
     public class CreateStudentUseCase
     {
+        private readonly UserManager<UniversityJournalIdentityUser> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly IStudentRepository _studentRepository;
 
-        public CreateStudentUseCase(IUserRepository userRepository, IStudentRepository studentRepository)
+        public CreateStudentUseCase(UserManager<UniversityJournalIdentityUser> userManager, IUserRepository userRepository, IStudentRepository studentRepository)
         {
+            _userManager = userManager;
             _userRepository = userRepository;
             _studentRepository = studentRepository;
         }
 
         public async Task<Guid> Handle(CreateStudentRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password) ||
-                string.IsNullOrWhiteSpace(request.FirstName) || string.IsNullOrWhiteSpace(request.LastName) ||
-                request.GroupId == Guid.Empty)
-            {
-                throw new ArgumentException("All fields are required, including GroupId.");
-            }
+            var email = !string.IsNullOrEmpty(request.Email)
+        ? request.Email
+        : $"{request.Login}@university.local";
 
-            var existingUser = await _userRepository.GetByLogin(request.Login);
-            if (existingUser != null)
+            var identityUser = new UniversityJournalIdentityUser
             {
-                throw new ArgumentException("Login already exists.");
-            }
+                UserName = request.Login,
+                Email = request.Login
+            };
 
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            var result = await _userManager.CreateAsync(identityUser, request.Password);
+
+            if (!result.Succeeded)
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            await _userManager.AddToRoleAsync(identityUser, UserRole.Student.ToString());
+
+            var identityId = identityUser.Id;
+
             var user = new User
             {
-                UserId = Guid.NewGuid(),
+                UserId = identityId,
                 Login = request.Login,
-                PasswordHash = passwordHash,
+                PasswordHash = "PROTECTED", 
                 Role = UserRole.Student,
                 CreatedAt = DateTime.UtcNow,
+                IdentityUserId = identityId 
             };
             await _userRepository.Create(user);
 
@@ -47,8 +57,9 @@ namespace UniversityJournal.Core.UseCases
                 UserId = user.UserId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                GroupId = request.GroupId,
+                GroupId = request.GroupId
             };
+
             return await _studentRepository.Create(student);
         }
 
@@ -56,6 +67,7 @@ namespace UniversityJournal.Core.UseCases
         {
             public string Login { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
+            public string?  Email { get; set; } = string.Empty;
             public string FirstName { get; set; } = string.Empty;
             public string LastName { get; set; } = string.Empty;
             public Guid GroupId { get; set; }

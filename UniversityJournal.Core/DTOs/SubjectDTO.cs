@@ -10,7 +10,7 @@ namespace UniversityJournal.Core.DTOs
     public class SubjectDTO
     {
         public Guid SubjectId { get; set; }    
-        public string SubjectName { get; set; } 
+        public string SubjectName { get; set; } = string.Empty;
         public Guid? TeacherId { get; set; }
 
         public int TotalHours { get; set; }

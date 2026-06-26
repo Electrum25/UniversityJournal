@@ -11,6 +11,6 @@ namespace UniversityJournal.Core.DTOs
         public Guid StudentId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public bool IsEnrolled { get; set; } // Флаг: зачислен ли на конкретный предмет
+        public bool IsEnrolled { get; set; } 
     }
 }

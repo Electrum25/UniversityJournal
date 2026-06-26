@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniversityJournal.Core.DTOs;
+﻿using UniversityJournal.Core.DTOs;
 using UniversityJournal.Core.Helpers;
 using UniversityJournal.Core.Storage.Repositories;
 
 namespace UniversityJournal.Core.UseCases.ScheduleUseCase
 {
-    public class GetScheduleByGroupUseCase
+    public class GetScheduleByTeacherUseCase
     {
         private readonly IScheduleRepository _repository;
-        public GetScheduleByGroupUseCase(IScheduleRepository repository) => _repository = repository;
 
-        public async Task<List<ScheduleItemDTO>> ExecuteAsync(Guid groupId, DateTime startDate, DateTime endDate)
+        public GetScheduleByTeacherUseCase(IScheduleRepository repository)
         {
-            var items = await _repository.GetByDateRangeAsync(groupId, startDate, endDate);
+            _repository = repository;
+        }
+
+        public async Task<List<ScheduleItemDTO>> ExecuteAsync(Guid teacherId, DateTime startDate, DateTime endDate)
+        {
+            var items = await _repository.GetByTeacherDateRangeAsync(teacherId, startDate, endDate);
 
             return items.Select(s => new ScheduleItemDTO
             {
@@ -24,7 +23,6 @@ namespace UniversityJournal.Core.UseCases.ScheduleUseCase
                 SubjectId = s.SubjectId,
                 SubjectName = s.Subject?.SubjectName ?? "Без названия",
                 GroupId = s.GroupId,
-                TeacherId = s.TeacherId,
                 TeacherFullName = s.Teacher != null
                     ? $"{s.Teacher.LastName} {s.Teacher.FirstName[0]}."
                     : "Не назначен",

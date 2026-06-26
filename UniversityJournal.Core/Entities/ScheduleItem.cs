@@ -13,12 +13,12 @@ namespace UniversityJournal.Core.Entities
         public Guid GroupId { get; set; }
         public Guid TeacherId { get; set; }
 
-        public DayOfWeek DayOfWeek { get; set; } // Понедельник, Вторник...
-        public int PairNumber { get; set; } // 1, 2, 3, 4 пара
+        public DateTime Date { get; set; } 
+        public int PairNumber { get; set; } 
 
-        // Для связи
-        public Subject Subject { get; set; }
+        public Subject? Subject { get; set; }
 
-        public Teacher Teacher { get; set; }
+        public Teacher? Teacher { get; set; }
+        public Group? Group { get; set; }
     }
 }

@@ -40,7 +40,6 @@ namespace UniversityJournal.Core.UseCases
         {
             using (var workbook = new XLWorkbook())
             {
-                // Лист Users
                 var users = await _userRepository.GetAll() ?? new List<User>();
                 var usersSheet = workbook.Worksheets.Add("Users");
                 usersSheet.Cell(1, 1).Value = "UserId";
@@ -55,7 +54,6 @@ namespace UniversityJournal.Core.UseCases
                     usersSheet.Cell(i + 2, 4).Value = users[i].CreatedAt.ToString();
                 }
 
-                // Лист Students
                 var students = await _studentRepository.GetAll() ?? new List<Student>();
                 var studentsSheet = workbook.Worksheets.Add("Students");
                 studentsSheet.Cell(1, 1).Value = "StudentId";
@@ -72,7 +70,6 @@ namespace UniversityJournal.Core.UseCases
                     studentsSheet.Cell(i + 2, 5).Value = students[i].GroupId.ToString();
                 }
 
-                // Лист Teachers
                 var teachers = await _teacherRepository.GetAll() ?? new List<Teacher>();
                 var teachersSheet = workbook.Worksheets.Add("Teachers");
                 teachersSheet.Cell(1, 1).Value = "TeacherId";
@@ -89,7 +86,6 @@ namespace UniversityJournal.Core.UseCases
                     teachersSheet.Cell(i + 2, 5).Value = teachers[i].Patronymic;
                 }
 
-                // Лист Groups
                 var groups = await _groupRepository.GetAll() ?? new List<Group>();
                 var groupsSheet = workbook.Worksheets.Add("Groups");
                 groupsSheet.Cell(1, 1).Value = "GroupId";
@@ -104,7 +100,6 @@ namespace UniversityJournal.Core.UseCases
                     groupsSheet.Cell(i + 2, 4).Value = groups[i].Year;
                 }
 
-                // Лист Subjects
                 var subjects = await _subjectRepository.GetAll() ?? new List<Subject>();
                 var subjectsSheet = workbook.Worksheets.Add("Subjects");
                 subjectsSheet.Cell(1, 1).Value = "SubjectId";
@@ -117,7 +112,6 @@ namespace UniversityJournal.Core.UseCases
                     subjectsSheet.Cell(i + 2, 3).Value = subjects[i].TeacherId.ToString();
                 }
 
-                // Лист StudentSubjects
                 var studentSubjects = await _studentSubjectRepository.GetAll() ?? new List<StudentSubject>();
                 var studentSubjectsSheet = workbook.Worksheets.Add("StudentSubjects");
                 studentSubjectsSheet.Cell(1, 1).Value = "StudentId";
@@ -132,7 +126,6 @@ namespace UniversityJournal.Core.UseCases
                     studentSubjectsSheet.Cell(i + 2, 4).Value = studentSubjects[i].FinalGrade;
                 }
 
-                // Лист Grades
                 var grades = await _gradeRepository.GetAll() ?? new List<Grade>();
                 var gradesSheet = workbook.Worksheets.Add("Grades");
                 gradesSheet.Cell(1, 1).Value = "GradeId";
@@ -153,7 +146,6 @@ namespace UniversityJournal.Core.UseCases
                     gradesSheet.Cell(i + 2, 7).Value = grades[i].Comment;
                 }
 
-                // Лист Attendances
                 var attendances = await _attendanceRepository.GetAll() ?? new List<Attendance>();
                 var attendancesSheet = workbook.Worksheets.Add("Attendances");
                 attendancesSheet.Cell(1, 1).Value = "AttendanceId";
